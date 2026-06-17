@@ -1,29 +1,38 @@
 import json
 import os
 
-# [ID, nome, idade, número, telefone]
-clientes = [[1, "Rafael Sodré", 21, "74999991111", "Irecê"],
-    [2, "Lucas Carneiro", 20, "74999992222", "Irecê"],
-    [3, "Kelvin Lima", 20, "74999993333", "Lapão"],
-    [4, "Maria Oliveira", 26, "74999994444", "Irecê"],
-    [5, "João Silva", 35, "74999995555", "Central"],
-    [6, "Ana Costa", 41, "74999996666", "Xique-Xique"],
-    [7, "Pedro Souza", 19, "74999997777", "Irecê"],
-    [8, "Carla Ribeiro", 49,  "74999998888", "Lapão"],
-    [9, "Marcos Pereira", 23, "74999999999", "América Dourada"],
-    [10, "Julia Almeida", 18, "74999990000", "Irecê"]]
+arquivo_clientes = "data/setor_clientes.json"
+arquivo_produtos = "data/setor_produtos.json"
 
-# [ID_Solicitacao, ID_Cliente (INTEGRAÇÃO), Produto, Motivo, Status]
-produtos = [[101, 1, "Sapatênis Couro T41", "Tamanho Incorreto", "Aguardando Postagem"],
-    [102, 2, "Bota Nobuck T42", "Defeito na Costura", "Em Análise"],
-    [103, 3, "Sandália Confort T37", "Desistência", "Reembolsado"],
-    [104, 4, "Sapato Social Premium T40", "Tamanho Incorreto", "Novo Par Enviado"],
-    [105, 5, "Tênis Running Sport T39", "Defeito no Solado", "Em Análise"],
-    [106, 6, "Sapatilha Flex T35", "Tamanho Incorreto", "Aguardando Postagem"],
-    [107, 1, "Bota Trekking Nobuck T41", "Defeito no Passador", "Substituído"],
-    [108, 8, "Scarpin Clássico T36", "Desistência", "Aguardando Triagem"],
-    [109, 9, "Chinelo Couro Confort T42", "Tamanho Incorreto", "Novo Par Enviado"],
-    [110, 10, "Mocassim Nobuck T38", "Defeito na Palmilha", "Reembolsado"]]
+if os.path.exists(arquivo_clientes):
+    with open(arquivo_clientes, "r", encoding="utf-8") as arquivo:
+        clientes = json.load(arquivo)
+else:
+    clientes = [[1, "Rafael Sodré", 21, "74999991111", "Irecê"], 
+                [2, "Lucas Carneiro", 20, "74999992222", "Irecê"], 
+                [3, "Kelvin Lima", 20, "74999993333", "Lapão"], 
+                [4, "Maria Oliveira", 26, "74999994444", "Irecê"], 
+                [5, "João Silva", 35, "74999995555", "Central"], 
+                [6, "Ana Costa", 41, "74999996666", "Xique-Xique"], 
+                [7, "Pedro Souza", 19, "74999997777", "Irecê"], 
+                [8, "Carla Ribeiro", 49, "74999998888", "Lapão"], 
+                [9, "Marcos Pereira", 23, "74999999999", "América Dourada"], 
+                [10, "Julia Almeida", 18, "74999990000", "Irecê"]]
+    
+if os.path.exists(arquivo_produtos):
+    with open(arquivo_produtos, "r", encoding="utf-8") as arquivo:
+        produtos = json.load(arquivo)
+else:
+    produtos = [[101, 1, "Sapatênis Couro T41", "Tamanho Incorreto", "Aguardando Postagem"],
+                [102, 2, "Bota Nobuck T42", "Defeito na Costura", "Em Análise"],
+                [103, 3, "Sandália Confort T37", "Desistência", "Reembolsado"],
+                [104, 4, "Sapato Social Premium T40", "Tamanho Incorreto", "Novo Par Enviado"],
+                [105, 5, "Tênis Running Sport T39", "Defeito no Solado", "Em Análise"],
+                [106, 6, "Sapatilha Flex T35", "Tamanho Incorreto", "Aguardando Postagem"],
+                [107, 1, "Bota Trekking Nobuck T41", "Defeito no Passador", "Substituído"],
+                [108, 8, "Scarpin Clássico T36", "Desistência", "Aguardando Triagem"],
+                [109, 9, "Chinelo Couro Confort T42", "Tamanho Incorreto", "Novo Par Enviado"],
+                [110, 10, "Mocassim Nobuck T38", "Defeito na Palmilha", "Reembolsado"]]
 
 
 def exibe_menu():
