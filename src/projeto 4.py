@@ -1,3 +1,6 @@
+import json
+import os
+
 # [ID, nome, idade, número, telefone]
 clientes = [[1, "Rafael Sodré", 21, "74999991111", "Irecê"],
     [2, "Lucas Carneiro", 20, "74999992222", "Irecê"],
