@@ -1,10 +1,10 @@
 import json
-import os
+from os import path
 
 arquivo_clientes = "data/setor_clientes.json"
 arquivo_produtos = "data/setor_produtos.json"
 
-if os.path.exists(arquivo_clientes):
+if path.exists(arquivo_clientes):
     with open(arquivo_clientes, "r", encoding="utf-8") as arquivo:
         clientes = json.load(arquivo)
 else:
@@ -19,7 +19,7 @@ else:
                 [9, "Marcos Pereira", 23, "74999999999", "América Dourada"], 
                 [10, "Julia Almeida", 18, "74999990000", "Irecê"]]
     
-if os.path.exists(arquivo_produtos):
+if path.exists(arquivo_produtos):
     with open(arquivo_produtos, "r", encoding="utf-8") as arquivo:
         produtos = json.load(arquivo)
 else:
@@ -34,6 +34,12 @@ else:
                 [109, 9, "Chinelo Couro Confort T42", "Tamanho Incorreto", "Novo Par Enviado"],
                 [110, 10, "Mocassim Nobuck T38", "Defeito na Palmilha", "Reembolsado"]]
 
+def salvar_dados():
+    with open(arquivo_clientes, "w", encoding="utf-8") as arquivo:
+        json.dump(clientes, arquivo, ensure_ascii=False)
+
+    with open(arquivo_produtos, "w", encoding="utf-8") as arquivo:
+        json.dump(produtos, arquivo, ensure_ascii=False)
 
 def exibe_menu():
     print("\n=== MENU ===")
@@ -134,6 +140,7 @@ def cadastrar_cliente():
 
         novo_cliente = [id_cliente, nome, idade, telefone, cidade]
         clientes.append(novo_cliente)
+        salvar_dados()
         
         print(f"\nCliente '{nome}' cadastrado com sucesso! (ID gerado: {id_cliente})")
         break
@@ -189,6 +196,7 @@ def excluir_clientes():
 
     if cliente_encontrado is not None:
         removido = clientes.pop(indice_para_remover)
+        salvar_dados()
         print(f"Cliente '{removido[1]}' (ID: {removido[0]}) removido com sucesso!")
     else:
         print("ERRO: Nenhum cliente encontrado com esse ID!")
@@ -248,6 +256,7 @@ def cadastrar_produtos():
 
     nova_linha_produto = [id_produto, id_cliente_procurado, descricao, motivo, status_padrao]
     produtos.append(nova_linha_produto)
+    salvar_dados()
 
     print(f"\nProduto cadastrado com sucesso! (ID da Solicitação: {id_produto})\n")
 
@@ -293,6 +302,7 @@ def excluir_produtos():
 
     if produto_encontrado is not None:
         removido = produtos.pop(indice_para_remover)
+        salvar_dados()
         print(f"Solicitação ID {removido[0]} ({removido[2]}) excluída com sucesso!")
     else:
         print("ERRO: Nenhuma solicitação encontrada com esse ID!")
@@ -346,6 +356,7 @@ def alterar_status_produto():
                 return
 
         print(f"Status atualizado com sucesso para: '{produto_encontrado[4]}'")
+        salvar_dados()
     else:
         print("ERRO: Nenhuma solicitação encontrada com esse ID!")
 
