@@ -1,5 +1,6 @@
 import json
 from os import path
+from datetime import datetime # O 1° datetime é o módulo, e o 2° é a classe
 
 arquivo_clientes = "data/setor_clientes.json"
 arquivo_produtos = "data/setor_produtos.json"
@@ -45,6 +46,7 @@ def exibe_menu():
     print("\n=== MENU ===")
     print("1 - Gerenciar clientes")
     print("2 - Gerenciar produtos (pós-venda)")
+    print("3 - Emitir relatórios")
     print("0 - Sair")
 
 
@@ -360,6 +362,120 @@ def alterar_status_produto():
     else:
         print("ERRO: Nenhuma solicitação encontrada com esse ID!")
 
+def menu_relatorios():
+    print("\n=== MÓDULO DE RELATÓRIOS ===")
+    print("1 - Gerar Relatório Geral Cruzado")
+    print("2 - Gerar Relatório Filtrado por Status")
+    print("0 - Voltar")
+    
+    opcao = input("Escolha: ").strip()
+    
+    if opcao == "1":
+        gerar_relatorio_geral()
+    elif opcao == "2":
+        gerar_relatorio_filtrado()
+    elif opcao == "0":
+        return
+    else:
+        print("Opção inválida!")
+
+def gerar_relatorio_geral():
+    caminho_relatorio = "data/relatorio_geral.txt"
+    
+    data_hora_atual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    
+    with open(caminho_relatorio, "w", encoding="utf-8") as arquivo:
+        
+        arquivo.write("=========================================================================\n")
+        arquivo.write("                       LOJA DE CALÇADOS - ERP                            \n")
+        arquivo.write("          RELATÓRIO GERAL CRUZADO DE SOLICITAÇÕES (PÓS-VENDA)            \n")
+        arquivo.write(f"          Gerado em: {data_hora_atual}                                   \n")
+        arquivo.write("=========================================================================\n\n")
+        
+        if not produtos:
+            arquivo.write("Nenhuma solicitação registrada no sistema.\n")
+            total_registros = 0
+        else:
+            # alinhamento das colunas com f-strings:
+            # ID Sol. (8 espaços), ID Cli. (8 espaços), Nome Cliente (22 espaços), Produto (25 espaços), Status (20 espaços)
+            arquivo.write(f"{'ID SOL.':<8}{'ID CLI.':<8}{'NOME DO CLIENTE':<22}{'PRODUTO':<25}{'STATUS':<20}\n")
+            arquivo.write("-" * 83 + "\n")
+            
+            total_registros = 0
+            for prod in produtos:
+                id_solicitacao, id_cliente_prod, nome_prod, motivo, status = prod
+                
+                nome_cliente = "Não Encontrado"
+                for cli in clientes:
+                    if cli[0] == id_cliente_prod:
+                        nome_cliente = cli[1]
+                        break
+                
+                # Corta nomes se forem grandes, para manter o alinhamento
+                nome_cliente_formatado = (nome_cliente[:19] + '...') if len(nome_cliente) > 20 else nome_cliente
+                nome_prod_formatado = (nome_prod[:22] + '...') if len(nome_prod) > 24 else nome_prod
+                
+                arquivo.write(f"{id_solicitacao:<8}{id_cliente_prod:<8}{nome_cliente_formatado:<22}{nome_prod_formatado:<25}{status:<20}\n")
+                total_registros += 1
+                
+        arquivo.write("-" * 83 + "\n")
+        arquivo.write(f"TOTAL DE REGISTROS EXPORTADOS: {total_registros}\n")
+        arquivo.write("=========================================================================\n")
+                
+    print(f"\nRelatório Geral gerado com sucesso em: {caminho_relatorio}")
+
+
+def gerar_relatorio_filtrado():
+    print("\nEscolha o status para filtrar:")
+    print("1 - Em Análise")
+    print("2 - Aguardando Postagem")
+    print("3 - Novo Par Enviado")
+    print("4 - Reembolsado")
+    
+    op = input("Opção: ").strip()
+    status_filtro = ""
+    if op == "1": status_filtro = "Em Análise"
+    elif op == "2": status_filtro = "Aguardando Postagem"
+    elif op == "3": status_filtro = "Novo Par Enviado"
+    elif op == "4": status_filtro = "Reembolsado"
+    else:
+        print("Opção inválida!")
+        return
+
+    caminho_relatorio = "data/relatorio_filtrado.txt"
+    data_hora_atual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    
+    with open(caminho_relatorio, "w", encoding="utf-8") as arquivo:
+
+        arquivo.write("=========================================================================\n")
+        arquivo.write("                       LOJA DE CALÇADOS - ERP                            \n")
+        arquivo.write(f"          RELATÓRIO FILTRADO: {status_filtro.upper()}                   \n")
+        arquivo.write(f"          Gerado em: {data_hora_atual}                                   \n")
+        arquivo.write("=========================================================================\n\n")
+        
+        arquivo.write(f"{'ID SOL.':<8}{'ID CLI.':<8}{'PRODUTO':<25}{'MOTIVO':<25}{'STATUS':<15}\n")
+        arquivo.write("-" * 81 + "\n")
+        
+        total_registros = 0
+        for prod in produtos:
+            if prod[4] == status_filtro:
+                id_solicitacao, id_cliente_prod, nome_prod, motivo, status = prod
+                
+                nome_prod_formatado = (nome_prod[:22] + '...') if len(nome_prod) > 24 else nome_prod
+                motivo_formatado = (motivo[:22] + '...') if len(motivo) > 24 else motivo
+                
+                arquivo.write(f"{id_solicitacao:<8}{id_cliente_prod:<8}{nome_prod_formatado:<25}{motivo_formatado:<25}{status:<15}\n")
+                total_registros += 1
+                
+        if total_registros == 0:
+            arquivo.write(f"\nNenhum produto encontrado com o status '{status_filtro}'.\n")
+            
+        arquivo.write("-" * 81 + "\n")
+        arquivo.write(f"TOTAL DE REGISTROS ENCONTRADOS: {total_registros}\n")
+        arquivo.write("=========================================================================\n")
+            
+    print(f"\nRelatório Filtrado gerado com sucesso em: {caminho_relatorio}")
+
 
 while True:
     exibe_menu()
@@ -370,6 +486,8 @@ while True:
             menu_clientes()
         case 2:
             menu_produtos()
+        case 3:
+            menu_relatorios()
         case 0:
             print("Saindo do sistema...")
             break
